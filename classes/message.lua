@@ -18,9 +18,9 @@ function message:reply(content)
     local payload = {
         content = content
     }
-    local res = http.request("POST","https://discord.com/api/v10/channels/" .. self.channel_id .. "/messages",{{"Authorization","Bot " .. self._client._token}},json.encode(payload))
+    local res = http.request("POST","https://discord.com/api/v10/channels/" .. self.channel_id .. "/messages",{{"Authorization","Bot " .. self._client._token},{"Content-Type","application/json"}},json.encode(payload))
     if res.code ~= 200 then
-        print(res.reason); return
+        return print(res.reason)
     end
 end
 
