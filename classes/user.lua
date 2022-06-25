@@ -1,9 +1,8 @@
-local user = {}
-user.__index = user
+local Object = require("discord.lua/classes/class")
 
-function user.new(d)
-    local self = {}
-    setmetatable(self,user)
+local user = Object:extend()
+
+function user:new(d)
     self.id = d["id"]
     self.bot = d["bot"]
     self.username = d["username"]

@@ -1,10 +1,8 @@
-local embed_image = {}
-embed_image.__index = embed_image
+local Object = require("discord.lua/classes/class")
 
-function embed_image.new()
-    local self = {}
-    setmetatable(self,embed_image)
+local embed_image = Object:extend()
 
+function embed_image:new()
     self.url = ""
 
     return self

@@ -1,13 +1,11 @@
-local embed = {}
-embed.__index = embed
+local Object = require("discord.lua/classes/class")
 
-embed.Field = require("./field")
-embed.Image = require("./embed_image")
+local embed = Object:extend()
 
-function embed.new()
-    local self = {}
-    setmetatable(self,embed)
+embed.Field = require("discord.lua/classes/field")
+embed.Image = require("discord.lua/classes/embed_image")
 
+function embed:new()
     self.fields = {}
 
     return self

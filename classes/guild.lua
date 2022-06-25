@@ -1,11 +1,8 @@
-local guild = {}
-guild.__index = guild
+local Object = require("discord.lua/classes/class")
 
-function guild.new(d)
-    local self = {}
+local guild = Object:extend()
 
-    setmetatable(self,guild)
-
+function guild:new(d)
     self.id = d["guild_id"]
 
     return self

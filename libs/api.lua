@@ -5,11 +5,13 @@ local json = require("json")
 
 local Message = require("../classes/message")
 
+local Object = require("discord.lua/classes/class")
+
 local wrap = coroutine.wrap
 
-local api = require("core").Object:extend()
+local api = Object:extend()
 
-function api:initialize(client)
+function api:new(client)
     self.client = client
     self.rest = "https://discord.com/api/v10"
 end
@@ -81,7 +83,11 @@ function api:login(token)
                     if event.op == 0 then
                         if event.t == "MESSAGE_CREATE" then
                             p(event.d)
-                            self.client:emit(event.t,Message.new(self.client,event.d))
+                            self.client:emit(event.t,Message(self.client,event.d))
+                        end
+                        if event.t == "INTERACTION_CREATE" then
+                            p(event.d)
+                            self.client:emit(event.t)
                         end
                     end
                     if event.op == 10 then

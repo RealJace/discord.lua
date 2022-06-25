@@ -3,7 +3,7 @@ local api = require("./api")
 local client = require("core").Emitter:extend()
 
 function client:initialize()
-    self.api = api:new(self)
+    self.api = api(self)
 end
 
 function client:login(token)
