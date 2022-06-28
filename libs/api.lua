@@ -4,6 +4,10 @@ local time = require("timer")
 local json = require("json")
 
 local Message = require("../classes/message")
+local Interaction = require("../classes/interaction")
+local User = require("../classes/user")
+
+local color = require("discord.lua/libs/colors")
 
 local Object = require("discord.lua/classes/class")
 
@@ -11,16 +15,29 @@ local wrap = coroutine.wrap
 
 local api = Object:extend()
 
-function api:new(client)
+api.api = nil
+
+function api:new(client,intents)
+
+    if not intents then error("Intents are required") end
+
     self.client = client
     self.rest = "https://discord.com/api/v10"
+    self.intents = intents
+    api.api = self
+    return self
+end
+
+function info(string,warn)
+    if not warn then
+        print(os.date("[%Y-%m-%d %H:%M:%S]") .. " - " .. color.green ..  "[DISCORD.LUA]" .. color.reset .. " " .. string)
+    else
+        print(os.date("[%Y-%m-%d %H:%M:%S]") .. " - " .. color.red ..  "[DISCORD.LUA]" .. color.reset .. " " .. string)
+    end
 end
 
 function api:login(token)
-
-    os.execute("color 2")
-
-    print("[DISCORD.LUA] Connecting to gateway.discord.gg")
+    info("Connecting to gateway.discord.gg")
 
     local res,read,write = websocket.connect{
         host = "gateway.discord.gg",
@@ -29,10 +46,16 @@ function api:login(token)
         port = 443,
     }
 
-    print("[DISCORD.LUA] Connected to gateway.discord.gg")
+    local intents = 0
+
+    if not type(self.intents) == "number" then error("Intents need to be provided as number.") end
+
+    intents = self.intents
 
     if not res then
-        return print(read())
+        return info(read,true)
+    else
+        info("Connected to gateway.discord.gg")
     end
 
     local hello_payload = json.decode(read().payload)
@@ -51,12 +74,13 @@ function api:login(token)
             })
         end)()
     end)
+
     wrap(function()
         local sucess,err = send({
             op = 2,
             d = {
                 token = token,
-                intents = 513,
+                intents = intents,
                 properties = {
                     os = "linux",
                     browser = "discord.lua",
@@ -65,11 +89,12 @@ function api:login(token)
             }
         })
         if not sucess then
-            print("[DISCORD.LUA] Failed identifing: " .. err)
+            info("Failed identifing: " .. err,true)
         else
-            print("[DISCORD.LUA] Identified")
+            info("Identified")
         end
     end)()
+    
     wrap(function ()
         for pl in read do
             local raw_event = pl.payload
@@ -77,29 +102,41 @@ function api:login(token)
                 local event,err = json.decode(raw_event)
                 if event then
                     if event.op == 2 then
-                        print("[DISCORD.LUA] Identified")
-                        self.client.user = event.d
+                        info("Identified")
+                        self.client:add_user(User(event.d))
                     end
                     if event.op == 0 then
+                        local arg = {}
                         if event.t == "MESSAGE_CREATE" then
-                            p(event.d)
-                            self.client:emit(event.t,Message(self.client,event.d))
+                            table.insert(arg,Message(event.d))
                         end
                         if event.t == "INTERACTION_CREATE" then
-                            p(event.d)
-                            self.client:emit(event.t)
+                            table.insert(arg,Interaction(event.d))
                         end
+                        self.client:emit(event.t,table.unpack(arg))
                     end
                     if event.op == 10 then
-                        print("[DISCORD.LUA] Received HELLO")
+                        info("Received HELLO")
                     end
                 else
-                    print(err)
+                    info(err,true)
                 end
             end
         end
     end)()
-    print("[DISCORD.LUA] Heartbeating")
+    info("Heartbeating")
+end
+
+function api:request(method,endpoint,payload_body)
+    local res,body = http.request(method,"https://discord.com/api/v10/" .. endpoint,{{"Authorization","Bot " .. self.client.token},{"Content-Type","application/json"}},json.encode(payload_body))
+    if res.code ~= 200 then
+        return info(res.reason,true)
+    end
+    return json.decode(body)
+end
+
+function api.get()
+    return api.api
 end
 
 return api

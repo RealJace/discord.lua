@@ -1,6 +1,5 @@
 local Object = require("discord.lua/classes/class")
 local field = Object:extend()
-field.__index = field
 
 function field:new(name,value,inline)
 

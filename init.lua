@@ -19,8 +19,8 @@ discord.Button = button
 discord.enums = require("./enums")
 
 
-function discord.Client()
-    local Client = client:new()
+function discord.Client(intents)
+    local Client = client:new(intents)
     return Client
 end
 

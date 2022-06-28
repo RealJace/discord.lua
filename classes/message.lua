@@ -1,51 +1,78 @@
-local http = require("coro-http")
-local json = require("json")
 
 local User = require("discord.lua/classes/user")
 local Guild = require("discord.lua/classes/guild")
+local Channel = require("discord.lua/classes/channel")
 local Object = require("discord.lua/classes/class")
+local Interaction = require("discord.lua/classes/interaction")
 
 local message = Object:extend()
 
-function message:new(client,d)
-    self.content = d["content"]
-    self.channel_id = d["channel_id"]
-    self.id = d["id"]
-    self.author = User(d["author"])
-    self.guild = Guild(d)
-    self._client = client
+function message:new(d)
+
+    if not d then return end
+
+    self.d = d
+
+    self.api = require("discord.lua/libs/api").get()
+    self.client = self.api.client
+    
+    self.content = self.d["content"]
+    self.id = self.d["id"]
+    self.author = User(self.d["author"])
+    self.guild = Guild(self.d)
+    self.channel = Channel(self.d)
+    self.mention_everyone = self.d["mention_everyone"]
+    self.mentions = {}
+
+    if self.d["mentions"] then
+        for i,user in ipairs(self.d["mentions"]) do
+            table.insert(self.mentions,i,User(user))
+        end
+    end
+
+    self.pinned = self.d["pinned"]
+    self.type = self.d["type"]
+    if self.d["interaction"] then
+        self.interaction = Interaction(self.d["interaction"])
+    end
+
     return self
 end
 
-function send_message(content,channel_id,client,reply_message_id)
-    if type(content) == "string" then
-        local payload = {
-            content = content
-            --message_reference = {message_id = reply_message_id}
-        }
-        local res = http.request("POST","https://discord.com/api/v10/channels/" .. channel_id .. "/messages",{{"Authorization","Bot " .. client._token},{"Content-Type","application/json"}},json.encode(payload))
-        if res.code ~= 200 then
-            return print(res.reason)
-        end
-        --return message.new(client,json.decode(res))
-    elseif type(content) == "table" then
-        local payload = {
-            content = content.content or "",
-            embeds = content.embeds or {},
-            --message_reference = {message_id = reply_message_id},
-            components = content.components or {}
-        }
-        local res = http.request("POST","https://discord.com/api/v10/channels/" .. channel_id .. "/messages",{{"Authorization","Bot " .. client._token},{"Content-Type","application/json"}},json.encode(payload))
-        if res.code ~= 200 then
-            return print(res.reason)
-        end
-
-        --return message.new(client,res)
-    end
-end
-
 function message:reply(content)
-    send_message(content,self.channel_id,self._client,message.id)
+    local payload = {}
+
+    if type(content) == "string" then
+        payload.content = content
+    elseif type(content) == "table" then
+        payload = content
+    end
+
+    payload.message_reference = {
+        message_id = self.id
+    }
+
+    if not self.channel.id then return end
+
+    local body = self.api:request("POST","channels/" .. self.channel.id .. "/messages",payload)
+
+    return message(self.client,body)
 end
+
+function message:edit(content)
+    local payload = {}
+
+    if type(content) == "string" then
+        payload.content = content
+    elseif type(content) == "table" then
+        payload = content
+    end
+
+    if not self.channel.id then return end
+
+    local body = self.api:request("PATCH","channels/" .. self.channel.id .. "/messages/" .. self.id,payload)
+end
+
+p(message)
 
 return message
