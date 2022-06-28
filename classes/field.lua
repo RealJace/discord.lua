@@ -1,7 +1,7 @@
 local Object = require("discord.lua/classes/class")
 local field = Object:extend()
 
-function field:new(name,value,inline)
+function field:init(name,value,inline)
 
     assert(name,"'name' parameter is required.")
     assert(value,"'value' parameter is required")
@@ -9,8 +9,6 @@ function field:new(name,value,inline)
     self.name = name
     self.value = value
     self.inline = inline or false
-
-    return self
 end
 
 return field

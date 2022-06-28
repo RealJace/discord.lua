@@ -3,9 +3,9 @@ local http = require("coro-http")
 local time = require("timer")
 local json = require("json")
 
-local Message = require("../classes/message")
-local Interaction = require("../classes/interaction")
-local User = require("../classes/user")
+local Message = require("discord.lua/classes/message")
+local Interaction = require("discord.lua/classes/interaction")
+local User = require("discord.lua/classes/user")
 
 local color = require("discord.lua/libs/colors")
 
@@ -17,7 +17,7 @@ local api = Object:extend()
 
 api.api = nil
 
-function api:new(client,intents)
+function api:init(client,intents)
 
     if not intents then error("Intents are required") end
 
@@ -25,7 +25,6 @@ function api:new(client,intents)
     self.rest = "https://discord.com/api/v10"
     self.intents = intents
     api.api = self
-    return self
 end
 
 function info(string,warn)
@@ -128,7 +127,9 @@ function api:login(token)
 end
 
 function api:request(method,endpoint,payload_body)
+
     local res,body = http.request(method,"https://discord.com/api/v10/" .. endpoint,{{"Authorization","Bot " .. self.client.token},{"Content-Type","application/json"}},json.encode(payload_body))
+    
     if res.code ~= 200 then
         return info(res.reason,true)
     end

@@ -1,8 +1,8 @@
 local Object = require("discord.lua/classes/class")
 
-local user = Object:extend("User")
+local user = Object:extend()
 
-function user:new(d)
+function user:init(d)
 
     if not d then return end
 
@@ -12,7 +12,6 @@ function user:new(d)
     self.bot = self.d["bot"]
     self.username = self.d["username"]
     self.discriminator = self.d["discriminator"]
-    return self
 end
 
 return user

@@ -9,7 +9,7 @@ local Channel = require("discord.lua/classes/channel")
 
 local interaction = Object:extend()
 
-function interaction:new(d)
+function interaction:init(d)
 
     if not d then return end
 
@@ -26,8 +26,6 @@ function interaction:new(d)
     self.guild = Guild(self.d)
     self.channel = Channel(self.d)
     self.message = Message(self.d["message"])
-
-    return self
 end
 
 function interaction:reply(content)

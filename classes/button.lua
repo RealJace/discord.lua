@@ -2,9 +2,8 @@ local Object = require("discord.lua/classes/class")
 
 local button = Object:extend()
 
-function button:new()
+function button:init()
     self.type = 2
-    return self
 end
 
 function button:set_label(label)

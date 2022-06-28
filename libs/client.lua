@@ -1,4 +1,8 @@
-local api = require("./api")
+local api = require("discord.lua/libs/api")
+
+local object = require("discord.lua/classes/class")
+
+local events = require("discord.lua/libs/events")
 
 local client = require("core").Emitter:extend()
 

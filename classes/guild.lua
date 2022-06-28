@@ -1,8 +1,8 @@
 local Object = require("discord.lua/classes/class")
 
-local guild = Object:extend("Guild")
+local guild = Object:extend()
 
-function guild:new(d)
+function guild:init(d)
 
     if not d then return end
 
@@ -24,8 +24,6 @@ function guild:new(d)
     self.splash = body.splash
     self.description = body.description
     self.banner = body.banner
-
-    return self
 end
 
 return guild

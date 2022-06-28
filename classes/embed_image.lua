@@ -2,10 +2,8 @@ local Object = require("discord.lua/classes/class")
 
 local embed_image = Object:extend()
 
-function embed_image:new()
+function embed_image:init()
     self.url = ""
-
-    return self
 end
 
 function embed_image:set_url(url)

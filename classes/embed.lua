@@ -5,10 +5,8 @@ local embed = Object:extend()
 embed.Field = require("discord.lua/classes/field")
 embed.Image = require("discord.lua/classes/embed_image")
 
-function embed:new()
+function embed:init()
     self.fields = {}
-
-    return self
 end
 
 function embed:set_title(title)

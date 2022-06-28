@@ -7,7 +7,7 @@ local Interaction = require("discord.lua/classes/interaction")
 
 local message = Object:extend()
 
-function message:new(d)
+function message:init(d)
 
     if not d then return end
 
@@ -35,8 +35,6 @@ function message:new(d)
     if self.d["interaction"] then
         self.interaction = Interaction(self.d["interaction"])
     end
-
-    return self
 end
 
 function message:reply(content)
@@ -53,6 +51,8 @@ function message:reply(content)
     }
 
     if not self.channel.id then return end
+
+    p(payload)
 
     local body = self.api:request("POST","channels/" .. self.channel.id .. "/messages",payload)
 
@@ -72,7 +72,5 @@ function message:edit(content)
 
     local body = self.api:request("PATCH","channels/" .. self.channel.id .. "/messages/" .. self.id,payload)
 end
-
-p(message)
 
 return message

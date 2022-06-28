@@ -2,9 +2,9 @@ local Object = require("discord.lua/classes/class")
 local Guild = require("discord.lua/classes/guild")
 local Message = require("discord.lua/classes/message")
 
-local channel = Object:extend("Channel")
+local channel = Object:extend()
 
-function channel:new(d)
+function channel:init(d)
 
     if not d then return end
 
@@ -14,8 +14,6 @@ function channel:new(d)
     self.guild = Guild(self.d)
     self.api = require("discord.lua/libs/api").get()
     self.client = self.api.client
-
-    return self
 end
 
 function channel:send(content)
