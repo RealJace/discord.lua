@@ -4,7 +4,7 @@ local Message = require("discord.lua/classes/message")
 
 local channel = Object:extend()
 
-function channel:init(d)
+function channel:new(d)
 
     if not d then return end
 

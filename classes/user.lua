@@ -2,7 +2,7 @@ local Object = require("discord.lua/classes/class")
 
 local user = Object:extend()
 
-function user:init(d)
+function user:new(d)
 
     if not d then return end
 

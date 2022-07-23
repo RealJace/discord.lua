@@ -2,7 +2,7 @@ local Object = require("discord.lua/classes/class")
 
 local action_row = Object:extend()
 
-function action_row:init()
+function action_row:new()
     self.type = 1
     self.components = {}
 end

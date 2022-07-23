@@ -17,7 +17,7 @@ local api = Object:extend()
 
 api.api = nil
 
-function api:init(client,intents)
+function api:new(client,intents)
 
     if not intents then error("Intents are required") end
 
@@ -105,14 +105,14 @@ function api:login(token)
                         self.client:add_user(User(event.d))
                     end
                     if event.op == 0 then
-                        local arg = {}
+                        local arg = nil
                         if event.t == "MESSAGE_CREATE" then
-                            table.insert(arg,Message(event.d))
+                            arg = Message(event.d)
                         end
                         if event.t == "INTERACTION_CREATE" then
-                            table.insert(arg,Interaction(event.d))
+                            arg = Interaction(event.d)
                         end
-                        self.client:emit(event.t,table.unpack(arg))
+                        self.client:emit(event.t,arg)
                     end
                     if event.op == 10 then
                         info("Received HELLO")

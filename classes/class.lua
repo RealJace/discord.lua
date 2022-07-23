@@ -12,7 +12,7 @@ local Object = {}
 Object.__index = Object
 
 
-function Object:init()
+function Object:new()
 end
 
 
@@ -60,14 +60,9 @@ end
 
 function Object:__call(...)
   local obj = setmetatable({}, self)
-  obj:init(...)
+  obj:new(...)
   return obj
 end
 
-function Object:new(...)
-  local obj = setmetatable({}, self)
-  obj:init(...)
-  return obj
-end
 
 return Object

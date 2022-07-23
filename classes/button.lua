@@ -2,7 +2,7 @@ local Object = require("discord.lua/classes/class")
 
 local button = Object:extend()
 
-function button:init()
+function button:new()
     self.type = 2
 end
 

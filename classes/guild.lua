@@ -2,7 +2,7 @@ local Object = require("discord.lua/classes/class")
 
 local guild = Object:extend()
 
-function guild:init(d)
+function guild:new(d)
 
     if not d then return end
 

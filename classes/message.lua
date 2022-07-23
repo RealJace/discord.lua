@@ -7,10 +7,9 @@ local Interaction = require("discord.lua/classes/interaction")
 
 local message = Object:extend()
 
-function message:init(d)
+function message:new(d)
 
     if not d then return end
-
     self.d = d
 
     self.api = require("discord.lua/libs/api").get()
